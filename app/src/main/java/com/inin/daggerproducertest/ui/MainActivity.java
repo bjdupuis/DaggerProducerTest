@@ -52,13 +52,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
-        App app = (App) getApplication();
-        sessionComponent = app.getSessionComponent();
-        if (app.getSessionComponent() == null) {
-            sessionComponent = app.createSessionComponent(new SessionModule());
-        }
-        sessionComponent.inject(this);
     }
 
     @Override
