@@ -3,6 +3,7 @@ package com.inin.daggerproducertest.service;
 
 import com.inin.daggerproducertest.di.AsyncDependencyCreator;
 
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public class SomeAsyncDependency {
@@ -16,7 +17,7 @@ public class SomeAsyncDependency {
     private void performLongTediousInitialization() {
         Thread thread = new Thread(() -> {
             try {
-                Thread.sleep(TimeUnit.SECONDS.toMillis(2));
+                Thread.sleep(TimeUnit.SECONDS.toMillis(new Random().nextInt(5)));
             } catch (InterruptedException e) {
                 // don't care
             }

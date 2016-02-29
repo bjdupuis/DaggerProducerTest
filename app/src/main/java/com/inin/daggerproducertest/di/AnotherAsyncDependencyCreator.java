@@ -2,6 +2,7 @@ package com.inin.daggerproducertest.di;
 
 import com.inin.daggerproducertest.service.AnotherAsyncDependency;
 
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -24,7 +25,7 @@ public class AnotherAsyncDependencyCreator extends AsyncDependencyCreator<Anothe
         }
         Thread thread = new Thread(() -> {
             try {
-                Thread.sleep(TimeUnit.SECONDS.toMillis(7));
+                Thread.sleep(TimeUnit.SECONDS.toMillis(new Random().nextInt(7)));
             } catch (InterruptedException e) {
                 // don't care
             }
