@@ -16,7 +16,7 @@ public class SomeAsyncDependency {
     private void performLongTediousInitialization() {
         Thread thread = new Thread(() -> {
             try {
-                Thread.sleep(TimeUnit.SECONDS.toMillis(5));
+                Thread.sleep(TimeUnit.SECONDS.toMillis(2));
             } catch (InterruptedException e) {
                 // don't care
             }

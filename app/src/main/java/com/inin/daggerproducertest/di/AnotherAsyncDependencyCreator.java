@@ -11,12 +11,17 @@ import java.util.concurrent.TimeUnit;
  * localized strings.
  */
 public class AnotherAsyncDependencyCreator extends AsyncDependencyCreator<AnotherAsyncDependency> {
+    AnotherAsyncDependency anotherAsyncDependency = null;
+
     public AnotherAsyncDependencyCreator() {
         performLongAndTediousCreation();
     }
 
     private void performLongAndTediousCreation() {
-        AnotherAsyncDependency dependency = new AnotherAsyncDependency();
+        if (anotherAsyncDependency != null) {
+            getAsyncDependencySatisfier().satisfyDependency(anotherAsyncDependency);
+            return;
+        }
         Thread thread = new Thread(() -> {
             try {
                 Thread.sleep(TimeUnit.SECONDS.toMillis(7));
@@ -24,7 +29,8 @@ public class AnotherAsyncDependencyCreator extends AsyncDependencyCreator<Anothe
                 // don't care
             }
 
-            getAsyncDependencySatisfier().satisfyDependency(dependency);
+            anotherAsyncDependency = new AnotherAsyncDependency();
+            getAsyncDependencySatisfier().satisfyDependency(anotherAsyncDependency);
         });
         thread.start();
     }

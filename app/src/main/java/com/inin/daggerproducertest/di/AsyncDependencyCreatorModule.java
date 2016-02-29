@@ -3,7 +3,7 @@ package com.inin.daggerproducertest.di;
 import dagger.Module;
 import dagger.Provides;
 
-@Module(includes = ApplicationModule.class)
+@Module
 public class AsyncDependencyCreatorModule implements AsyncDependencyCreatorComponent {
 
     @Provides
