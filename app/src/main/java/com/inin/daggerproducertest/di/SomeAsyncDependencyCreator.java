@@ -1,5 +1,7 @@
 package com.inin.daggerproducertest.di;
 
+import com.google.common.util.concurrent.ListenableFuture;
+import com.inin.daggerproducertest.service.CommonPrecursorAsyncDependency;
 import com.inin.daggerproducertest.service.SomeAsyncDependency;
 
 /**
@@ -8,7 +10,16 @@ import com.inin.daggerproducertest.service.SomeAsyncDependency;
  * on a bound Service. Until the Service is bound the dependency is not complete.
  */
 public class SomeAsyncDependencyCreator extends AsyncDependencyCreator<SomeAsyncDependency> {
-    public SomeAsyncDependencyCreator() {
-        SomeAsyncDependency someAsyncDependency = new SomeAsyncDependency(getAsyncDependencySatisfier());
+    private final CommonPrecursorAsyncDependency commonPrecursorAsyncDependency;
+
+    public SomeAsyncDependencyCreator(CommonPrecursorAsyncDependency commonPrecursorAsyncDependency) {
+        this.commonPrecursorAsyncDependency = commonPrecursorAsyncDependency;
     }
+
+    @Override
+    public ListenableFuture<SomeAsyncDependency> getAsyncDependencyCreatorListenableFuture() {
+        new SomeAsyncDependency(getAsyncDependencySatisfier(), commonPrecursorAsyncDependency);
+        return super.getAsyncDependencyCreatorListenableFuture();
+    }
+
 }

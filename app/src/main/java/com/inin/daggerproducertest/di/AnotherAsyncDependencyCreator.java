@@ -1,6 +1,7 @@
 package com.inin.daggerproducertest.di;
 
 import com.inin.daggerproducertest.service.AnotherAsyncDependency;
+import com.inin.daggerproducertest.service.CommonPrecursorAsyncDependency;
 
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -12,9 +13,11 @@ import java.util.concurrent.TimeUnit;
  * localized strings.
  */
 public class AnotherAsyncDependencyCreator extends AsyncDependencyCreator<AnotherAsyncDependency> {
+    private final CommonPrecursorAsyncDependency commonPrecursorAsyncDependency;
     AnotherAsyncDependency anotherAsyncDependency = null;
 
-    public AnotherAsyncDependencyCreator() {
+    public AnotherAsyncDependencyCreator(CommonPrecursorAsyncDependency commonPrecursorAsyncDependency) {
+        this.commonPrecursorAsyncDependency = commonPrecursorAsyncDependency;
         performLongAndTediousCreation();
     }
 
@@ -30,7 +33,7 @@ public class AnotherAsyncDependencyCreator extends AsyncDependencyCreator<Anothe
                 // don't care
             }
 
-            anotherAsyncDependency = new AnotherAsyncDependency();
+            anotherAsyncDependency = new AnotherAsyncDependency(commonPrecursorAsyncDependency);
             getAsyncDependencySatisfier().satisfyDependency(anotherAsyncDependency);
         });
         thread.start();

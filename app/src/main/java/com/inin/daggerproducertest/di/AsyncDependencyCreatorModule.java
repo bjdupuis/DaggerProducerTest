@@ -1,22 +1,22 @@
 package com.inin.daggerproducertest.di;
 
-import dagger.Module;
-import dagger.Provides;
+import com.inin.daggerproducertest.service.CommonPrecursorAsyncDependency;
 
-@Module
+import dagger.producers.ProducerModule;
+import dagger.producers.Produces;
+
+@ProducerModule
 public class AsyncDependencyCreatorModule implements AsyncDependencyCreatorComponent {
 
-    @Provides
+    @Produces
     @ForSession
-    @Override
-    public AnotherAsyncDependencyCreator provideAnotherAsyncDependencyCreator() {
-        return new AnotherAsyncDependencyCreator();
+    public AnotherAsyncDependencyCreator provideAnotherAsyncDependencyCreator(CommonPrecursorAsyncDependency commonPrecursorAsyncDependency) {
+        return new AnotherAsyncDependencyCreator(commonPrecursorAsyncDependency);
     }
 
-    @Provides
+    @Produces
     @ForSession
-    @Override
-    public SomeAsyncDependencyCreator provideSomeAsyncDependencyCreator() {
-        return new SomeAsyncDependencyCreator();
+    public SomeAsyncDependencyCreator provideSomeAsyncDependencyCreator(CommonPrecursorAsyncDependency commonPrecursorAsyncDependency) {
+        return new SomeAsyncDependencyCreator(commonPrecursorAsyncDependency);
     }
 }

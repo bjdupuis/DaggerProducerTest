@@ -4,14 +4,17 @@ package com.inin.daggerproducertest.di;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.inin.daggerproducertest.data.CompositeSessionInfo;
 import com.inin.daggerproducertest.service.AnotherAsyncDependency;
+import com.inin.daggerproducertest.service.CommonPrecursorAsyncDependency;
 import com.inin.daggerproducertest.service.SomeAsyncDependency;
 import com.inin.daggerproducertest.ui.MainActivity;
 
 import dagger.producers.ProductionComponent;
 
 @ForSession
-@ProductionComponent(modules = {SessionModule.class, AsyncDependencyCreatorModule.class}, dependencies = ApplicationComponent.class)
+@ProductionComponent(modules = {SessionModule.class, AsyncDependencyCreatorModule.class, CommonPrecursorCreatorModule.class}, dependencies = ApplicationComponent.class)
 public interface SessionComponent {
+    ListenableFuture<CommonPrecursorAsyncDependency> getCommonPrecursorAsyncDependencyFuture();
+
     ListenableFuture<SomeAsyncDependency> getSomeAsyncDependencyFuture();
 
     ListenableFuture<AnotherAsyncDependency> getAnotherAsyncDependencyFuture();

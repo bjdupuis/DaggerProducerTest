@@ -3,6 +3,7 @@ package com.inin.daggerproducertest.di;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.inin.daggerproducertest.data.CompositeSessionInfo;
 import com.inin.daggerproducertest.service.AnotherAsyncDependency;
+import com.inin.daggerproducertest.service.CommonPrecursorAsyncDependency;
 import com.inin.daggerproducertest.service.SomeAsyncDependency;
 
 import dagger.producers.ProducerModule;
@@ -10,6 +11,12 @@ import dagger.producers.Produces;
 
 @ProducerModule
 public class SessionModule {
+
+    @Produces
+    @ForSession
+    public ListenableFuture<CommonPrecursorAsyncDependency> produceCommonPrecursorAsyncDependency(CommonPrecursorAsyncDependencyCreator injector) {
+        return injector.getAsyncDependencyCreatorListenableFuture();
+    }
 
     @Produces
     @ForSession

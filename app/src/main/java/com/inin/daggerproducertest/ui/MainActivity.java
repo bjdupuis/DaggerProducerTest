@@ -16,6 +16,7 @@ import com.inin.daggerproducertest.data.CompositeSessionInfo;
 import com.inin.daggerproducertest.di.SessionComponent;
 import com.inin.daggerproducertest.di.SessionModule;
 import com.inin.daggerproducertest.service.AnotherAsyncDependency;
+import com.inin.daggerproducertest.service.CommonPrecursorAsyncDependency;
 import com.inin.daggerproducertest.service.SomeAsyncDependency;
 
 import javax.inject.Inject;
@@ -27,6 +28,8 @@ import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
 
+    @Bind(R.id.precursor_status)
+    TextView precursorStatus;
     @Bind(R.id.some_status)
     TextView someStatus;
     @Bind(R.id.another_status)
@@ -74,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
         anotherStatus.setTextColor(Color.GRAY);
         compositeStatus.setText("Awaiting...");
         compositeStatus.setTextColor(Color.GRAY);
+        precursorStatus.setText("Awaiting...");
+        precursorStatus.setTextColor(Color.GRAY);
 
         App app = (App) getApplication();
         sessionComponent = app.getSessionComponent();
@@ -81,6 +86,21 @@ public class MainActivity extends AppCompatActivity {
             sessionComponent = app.createSessionComponent(new SessionModule());
         }
         sessionComponent.inject(this);
+
+        Futures.addCallback(sessionComponent.getCommonPrecursorAsyncDependencyFuture(), new FutureCallback<CommonPrecursorAsyncDependency>() {
+            @Override
+            public void onSuccess(CommonPrecursorAsyncDependency result) {
+                handler.post(() -> {
+                    precursorStatus.setText("Acquired");
+                    precursorStatus.setTextColor(Color.GREEN);
+                });
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                // empty
+            }
+        });
 
         Futures.addCallback(sessionComponent.getSomeAsyncDependencyFuture(), new FutureCallback<SomeAsyncDependency>() {
             @Override

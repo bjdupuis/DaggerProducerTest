@@ -1,12 +1,9 @@
 package com.inin.daggerproducertest.di;
 
-import dagger.Component;
+import dagger.producers.ProductionComponent;
 
 @ForSession
-@Component(modules = AsyncDependencyCreatorModule.class)
+@ProductionComponent(modules = AsyncDependencyCreatorModule.class)
 public interface AsyncDependencyCreatorComponent {
 
-    AnotherAsyncDependencyCreator provideAnotherAsyncDependencyCreator();
-
-    SomeAsyncDependencyCreator provideSomeAsyncDependencyCreator();
 }
