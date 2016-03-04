@@ -14,8 +14,8 @@ import com.inin.daggerproducertest.App;
 import com.inin.daggerproducertest.R;
 import com.inin.daggerproducertest.data.SessionProvisionModule;
 import com.inin.daggerproducertest.di.ForSession;
-import com.inin.daggerproducertest.di.SessionAcquisitionComponent;
-import com.inin.daggerproducertest.di.SessionAcquisitionModule;
+import com.inin.daggerproducertest.di.SessionProductionComponent;
+import com.inin.daggerproducertest.di.SessionProductionModule;
 import com.inin.daggerproducertest.service.AnotherAsyncDependency;
 import com.inin.daggerproducertest.service.CommonPrecursorAsyncDependency;
 import com.inin.daggerproducertest.service.SomeAsyncDependency;
@@ -50,12 +50,12 @@ public class MainActivity extends AppCompatActivity {
     AnotherAsyncDependency anotherAsyncDependency;
 
     private Handler handler = new Handler();
-    private SessionAcquisitionComponent sessionAcquisitionComponent;
+    private SessionProductionComponent sessionProductionComponent;
 
     @OnClick(R.id.reset_button)
     public void onResetButtonClicked(View v) {
         App app = (App) getApplication();
-        app.releaseSessionComponent();
+        app.releaseSessionComponents();
         acquireDependencies();
     }
 
@@ -90,12 +90,12 @@ public class MainActivity extends AppCompatActivity {
         precursorStatus.setTextColor(Color.GRAY);
 
         App app = (App) getApplication();
-        sessionAcquisitionComponent = app.getSessionAcquisitionComponent();
-        if (app.getSessionAcquisitionComponent() == null) {
-            sessionAcquisitionComponent = app.createSessionAcquisitionComponent(new SessionAcquisitionModule());
+        sessionProductionComponent = app.getSessionProductionComponent();
+        if (app.getSessionProductionComponent() == null) {
+            sessionProductionComponent = app.createSessionProductionComponent(new SessionProductionModule());
         }
 
-        Futures.addCallback(sessionAcquisitionComponent.getCommonPrecursorAsyncDependencyFuture(), new FutureCallback<CommonPrecursorAsyncDependency>() {
+        Futures.addCallback(sessionProductionComponent.getCommonPrecursorAsyncDependencyFuture(), new FutureCallback<CommonPrecursorAsyncDependency>() {
             @Override
             public void onSuccess(CommonPrecursorAsyncDependency result) {
                 handler.post(() -> {
@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Futures.addCallback(sessionAcquisitionComponent.getSomeAsyncDependencyFuture(), new FutureCallback<SomeAsyncDependency>() {
+        Futures.addCallback(sessionProductionComponent.getSomeAsyncDependencyFuture(), new FutureCallback<SomeAsyncDependency>() {
             @Override
             public void onSuccess(SomeAsyncDependency result) {
                 handler.post(() -> {
@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Futures.addCallback(sessionAcquisitionComponent.getAnotherAsyncDependencyFuture(), new FutureCallback<AnotherAsyncDependency>() {
+        Futures.addCallback(sessionProductionComponent.getAnotherAsyncDependencyFuture(), new FutureCallback<AnotherAsyncDependency>() {
             @Override
             public void onSuccess(AnotherAsyncDependency result) {
                 handler.post(() -> {
@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Futures.addCallback(sessionAcquisitionComponent.getCompositeSessionInfoFuture(),
+        Futures.addCallback(sessionProductionComponent.getSessionProvisionModuleFuture(),
                 new FutureCallback<SessionProvisionModule>() {
                     @Override
                     public void onSuccess(SessionProvisionModule result) {

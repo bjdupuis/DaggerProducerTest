@@ -7,10 +7,10 @@ import com.inin.daggerproducertest.data.SessionProvisionModule;
 import com.inin.daggerproducertest.di.ApplicationComponent;
 import com.inin.daggerproducertest.di.ApplicationModule;
 import com.inin.daggerproducertest.di.DaggerApplicationComponent;
-import com.inin.daggerproducertest.di.DaggerSessionAcquisitionComponent;
+import com.inin.daggerproducertest.di.DaggerSessionProductionComponent;
 import com.inin.daggerproducertest.di.DaggerSessionProvisionComponent;
-import com.inin.daggerproducertest.di.SessionAcquisitionComponent;
-import com.inin.daggerproducertest.di.SessionAcquisitionModule;
+import com.inin.daggerproducertest.di.SessionProductionComponent;
+import com.inin.daggerproducertest.di.SessionProductionModule;
 import com.inin.daggerproducertest.di.SessionProvisionComponent;
 
 import java.util.concurrent.Executors;
@@ -21,7 +21,7 @@ public class App extends Application {
     @Inject
     SharedPreferences sharedPreferences;
     private ApplicationComponent component;
-    private SessionAcquisitionComponent sessionAcquisitionComponent = null;
+    private SessionProductionComponent sessionProductionComponent = null;
     private SessionProvisionComponent sessionProvisionComponent = null;
 
     @Override
@@ -46,21 +46,21 @@ public class App extends Application {
         return sessionProvisionComponent;
     }
 
-    public SessionAcquisitionComponent getSessionAcquisitionComponent() {
-        return sessionAcquisitionComponent;
+    public SessionProductionComponent getSessionProductionComponent() {
+        return sessionProductionComponent;
     }
 
-    public SessionAcquisitionComponent createSessionAcquisitionComponent(SessionAcquisitionModule sessionAcquisitionModule) {
-        sessionAcquisitionComponent = component.plus(DaggerSessionAcquisitionComponent.builder()
+    public SessionProductionComponent createSessionProductionComponent(SessionProductionModule sessionProductionModule) {
+        sessionProductionComponent = component.plus(DaggerSessionProductionComponent.builder()
                 .applicationComponent(getComponent())
-                .sessionAcquisitionModule(sessionAcquisitionModule)
+                .sessionProductionModule(sessionProductionModule)
                 .executor(Executors.newSingleThreadExecutor())
                 .build());
-        return sessionAcquisitionComponent;
+        return sessionProductionComponent;
     }
 
-    public void releaseSessionComponent() {
-        sessionAcquisitionComponent = null;
+    public void releaseSessionComponents() {
+        sessionProductionComponent = null;
         sessionProvisionComponent = null;
     }
 

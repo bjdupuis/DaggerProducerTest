@@ -14,7 +14,7 @@ import dagger.Component;
 public interface ApplicationComponent {
     void inject(App app);
 
-    SessionAcquisitionComponent plus(SessionAcquisitionComponent sessionAcquisitionComponent);
+    SessionProductionComponent plus(SessionProductionComponent sessionProductionComponent);
 
     SessionProvisionComponent plus(SessionProvisionComponent component);
 

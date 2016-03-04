@@ -14,7 +14,7 @@ import dagger.producers.ProducerModule;
 import dagger.producers.Produces;
 
 @ProducerModule
-public class SessionAcquisitionModule {
+public class SessionProductionModule {
 
     @Produces
     @ForSession
@@ -36,7 +36,7 @@ public class SessionAcquisitionModule {
 
     @Produces
     @ForSession
-    public SessionProvisionModule produceCompositeSessionInfo(Application app, SomeAsyncDependency someAsyncDependency, AnotherAsyncDependency anotherAsyncDependency) {
+    public SessionProvisionModule produceSessionProvisionModule(Application app, SomeAsyncDependency someAsyncDependency, AnotherAsyncDependency anotherAsyncDependency) {
         SessionProvisionModule module = new SessionProvisionModule(someAsyncDependency, anotherAsyncDependency);
         ((App) app).createSessionProvisionComponent(module);
         return module;
