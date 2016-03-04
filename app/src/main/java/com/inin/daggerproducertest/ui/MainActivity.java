@@ -12,9 +12,10 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.inin.daggerproducertest.App;
 import com.inin.daggerproducertest.R;
-import com.inin.daggerproducertest.data.CompositeSessionInfo;
-import com.inin.daggerproducertest.di.SessionComponent;
-import com.inin.daggerproducertest.di.SessionModule;
+import com.inin.daggerproducertest.data.SessionProvisionModule;
+import com.inin.daggerproducertest.di.ForSession;
+import com.inin.daggerproducertest.di.SessionAcquisitionComponent;
+import com.inin.daggerproducertest.di.SessionAcquisitionModule;
 import com.inin.daggerproducertest.service.AnotherAsyncDependency;
 import com.inin.daggerproducertest.service.CommonPrecursorAsyncDependency;
 import com.inin.daggerproducertest.service.SomeAsyncDependency;
@@ -40,8 +41,16 @@ public class MainActivity extends AppCompatActivity {
     @Singleton
     @Inject
     SharedPreferences sharedPreferences;
+
+    @ForSession
+    @Inject
+    SomeAsyncDependency someAsyncDependency;
+    @ForSession
+    @Inject
+    AnotherAsyncDependency anotherAsyncDependency;
+
     private Handler handler = new Handler();
-    private SessionComponent sessionComponent;
+    private SessionAcquisitionComponent sessionAcquisitionComponent;
 
     @OnClick(R.id.reset_button)
     public void onResetButtonClicked(View v) {
@@ -81,13 +90,12 @@ public class MainActivity extends AppCompatActivity {
         precursorStatus.setTextColor(Color.GRAY);
 
         App app = (App) getApplication();
-        sessionComponent = app.getSessionComponent();
-        if (app.getSessionComponent() == null) {
-            sessionComponent = app.createSessionComponent(new SessionModule());
+        sessionAcquisitionComponent = app.getSessionAcquisitionComponent();
+        if (app.getSessionAcquisitionComponent() == null) {
+            sessionAcquisitionComponent = app.createSessionAcquisitionComponent(new SessionAcquisitionModule());
         }
-        sessionComponent.inject(this);
 
-        Futures.addCallback(sessionComponent.getCommonPrecursorAsyncDependencyFuture(), new FutureCallback<CommonPrecursorAsyncDependency>() {
+        Futures.addCallback(sessionAcquisitionComponent.getCommonPrecursorAsyncDependencyFuture(), new FutureCallback<CommonPrecursorAsyncDependency>() {
             @Override
             public void onSuccess(CommonPrecursorAsyncDependency result) {
                 handler.post(() -> {
@@ -102,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Futures.addCallback(sessionComponent.getSomeAsyncDependencyFuture(), new FutureCallback<SomeAsyncDependency>() {
+        Futures.addCallback(sessionAcquisitionComponent.getSomeAsyncDependencyFuture(), new FutureCallback<SomeAsyncDependency>() {
             @Override
             public void onSuccess(SomeAsyncDependency result) {
                 handler.post(() -> {
@@ -117,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Futures.addCallback(sessionComponent.getAnotherAsyncDependencyFuture(), new FutureCallback<AnotherAsyncDependency>() {
+        Futures.addCallback(sessionAcquisitionComponent.getAnotherAsyncDependencyFuture(), new FutureCallback<AnotherAsyncDependency>() {
             @Override
             public void onSuccess(AnotherAsyncDependency result) {
                 handler.post(() -> {
@@ -132,13 +140,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Futures.addCallback(sessionComponent.getCompositeSessionInfoFuture(),
-                new FutureCallback<CompositeSessionInfo>() {
+        Futures.addCallback(sessionAcquisitionComponent.getCompositeSessionInfoFuture(),
+                new FutureCallback<SessionProvisionModule>() {
                     @Override
-                    public void onSuccess(CompositeSessionInfo result) {
+                    public void onSuccess(SessionProvisionModule result) {
                         handler.post(() -> {
                             compositeStatus.setText("Acquired");
                             compositeStatus.setTextColor(Color.GREEN);
+
+                            app.getSessionProvisionComponent().inject(MainActivity.this);
+                            if (someAsyncDependency == null || anotherAsyncDependency == null) {
+                                compositeStatus.setText("No dependencies injected");
+                                compositeStatus.setTextColor(Color.RED);
+                            }
                         });
                     }
 

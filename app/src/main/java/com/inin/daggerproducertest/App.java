@@ -3,12 +3,15 @@ package com.inin.daggerproducertest;
 import android.app.Application;
 import android.content.SharedPreferences;
 
+import com.inin.daggerproducertest.data.SessionProvisionModule;
 import com.inin.daggerproducertest.di.ApplicationComponent;
 import com.inin.daggerproducertest.di.ApplicationModule;
 import com.inin.daggerproducertest.di.DaggerApplicationComponent;
-import com.inin.daggerproducertest.di.DaggerSessionComponent;
-import com.inin.daggerproducertest.di.SessionComponent;
-import com.inin.daggerproducertest.di.SessionModule;
+import com.inin.daggerproducertest.di.DaggerSessionAcquisitionComponent;
+import com.inin.daggerproducertest.di.DaggerSessionProvisionComponent;
+import com.inin.daggerproducertest.di.SessionAcquisitionComponent;
+import com.inin.daggerproducertest.di.SessionAcquisitionModule;
+import com.inin.daggerproducertest.di.SessionProvisionComponent;
 
 import java.util.concurrent.Executors;
 
@@ -18,7 +21,8 @@ public class App extends Application {
     @Inject
     SharedPreferences sharedPreferences;
     private ApplicationComponent component;
-    private SessionComponent sessionComponent = null;
+    private SessionAcquisitionComponent sessionAcquisitionComponent = null;
+    private SessionProvisionComponent sessionProvisionComponent = null;
 
     @Override
     public void onCreate() {
@@ -30,21 +34,34 @@ public class App extends Application {
         return component;
     }
 
-    public SessionComponent getSessionComponent() {
-        return sessionComponent;
+    public SessionProvisionComponent createSessionProvisionComponent(SessionProvisionModule module) {
+        sessionProvisionComponent = component.plus(DaggerSessionProvisionComponent.builder()
+                .applicationComponent(getComponent())
+                .sessionProvisionModule(module)
+                .build());
+        return sessionProvisionComponent;
     }
 
-    public SessionComponent createSessionComponent(SessionModule sessionModule) {
-        sessionComponent = component.plus(DaggerSessionComponent.builder()
+    public SessionProvisionComponent getSessionProvisionComponent() {
+        return sessionProvisionComponent;
+    }
+
+    public SessionAcquisitionComponent getSessionAcquisitionComponent() {
+        return sessionAcquisitionComponent;
+    }
+
+    public SessionAcquisitionComponent createSessionAcquisitionComponent(SessionAcquisitionModule sessionAcquisitionModule) {
+        sessionAcquisitionComponent = component.plus(DaggerSessionAcquisitionComponent.builder()
                 .applicationComponent(getComponent())
-                .sessionModule(sessionModule)
+                .sessionAcquisitionModule(sessionAcquisitionModule)
                 .executor(Executors.newSingleThreadExecutor())
                 .build());
-        return sessionComponent;
+        return sessionAcquisitionComponent;
     }
 
     public void releaseSessionComponent() {
-        sessionComponent = null;
+        sessionAcquisitionComponent = null;
+        sessionProvisionComponent = null;
     }
 
     private void buildComponentAndInject() {

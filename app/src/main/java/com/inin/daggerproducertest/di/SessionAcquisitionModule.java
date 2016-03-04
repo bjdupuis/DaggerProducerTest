@@ -1,7 +1,11 @@
 package com.inin.daggerproducertest.di;
 
+import android.app.Application;
+import android.content.SharedPreferences;
+
 import com.google.common.util.concurrent.ListenableFuture;
-import com.inin.daggerproducertest.data.CompositeSessionInfo;
+import com.inin.daggerproducertest.App;
+import com.inin.daggerproducertest.data.SessionProvisionModule;
 import com.inin.daggerproducertest.service.AnotherAsyncDependency;
 import com.inin.daggerproducertest.service.CommonPrecursorAsyncDependency;
 import com.inin.daggerproducertest.service.SomeAsyncDependency;
@@ -10,7 +14,7 @@ import dagger.producers.ProducerModule;
 import dagger.producers.Produces;
 
 @ProducerModule
-public class SessionModule {
+public class SessionAcquisitionModule {
 
     @Produces
     @ForSession
@@ -20,7 +24,7 @@ public class SessionModule {
 
     @Produces
     @ForSession
-    public ListenableFuture<SomeAsyncDependency> produceSomeAsyncDependency(SomeAsyncDependencyCreator injector) {
+    public ListenableFuture<SomeAsyncDependency> produceSomeAsyncDependency(SharedPreferences sharedPreferences, SomeAsyncDependencyCreator injector) {
         return injector.getAsyncDependencyCreatorListenableFuture();
     }
 
@@ -32,7 +36,9 @@ public class SessionModule {
 
     @Produces
     @ForSession
-    public CompositeSessionInfo produceCompositeSessionInfo(SomeAsyncDependency someAsyncDependency, AnotherAsyncDependency anotherAsyncDependency) {
-        return new CompositeSessionInfo(someAsyncDependency, anotherAsyncDependency);
+    public SessionProvisionModule produceCompositeSessionInfo(Application app, SomeAsyncDependency someAsyncDependency, AnotherAsyncDependency anotherAsyncDependency) {
+        SessionProvisionModule module = new SessionProvisionModule(someAsyncDependency, anotherAsyncDependency);
+        ((App) app).createSessionProvisionComponent(module);
+        return module;
     }
 }

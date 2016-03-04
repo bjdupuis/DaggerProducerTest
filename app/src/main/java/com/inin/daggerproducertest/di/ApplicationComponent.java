@@ -1,5 +1,6 @@
 package com.inin.daggerproducertest.di;
 
+import android.app.Application;
 import android.content.SharedPreferences;
 
 import com.inin.daggerproducertest.App;
@@ -13,7 +14,11 @@ import dagger.Component;
 public interface ApplicationComponent {
     void inject(App app);
 
-    SessionComponent plus(SessionComponent sessionComponent);
+    SessionAcquisitionComponent plus(SessionAcquisitionComponent sessionAcquisitionComponent);
+
+    SessionProvisionComponent plus(SessionProvisionComponent component);
 
     SharedPreferences sharedPreferences();
+
+    Application application();
 }
